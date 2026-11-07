@@ -4,7 +4,6 @@ from . import views
 
 urlpatterns = [
     path("robots.txt", views.robots_txt, name="robots_txt"),
-    path("acces/", views.access, name="access"),
     path("", views.home, name="accueil"),
     path("maison/<slug:slug>/", views.house_detail, name="maison"),
     path("depenser/", views.spend_points, name="depenser"),

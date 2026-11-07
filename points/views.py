@@ -1,43 +1,11 @@
-from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_http_methods
 
-from .access import SESSION_ACCESS_KEY, access_code_matches, shared_code_required
 from .actions import ActionsConfigError, load_actions
 from .models import House
 from .services import InsufficientPointsError, apply_points
-
-
-@require_http_methods(["GET", "POST"])
-def access(request):
-    if request.session.get(SESSION_ACCESS_KEY):
-        return redirect("accueil")
-
-    next_url = request.GET.get("next") or request.POST.get("next") or ""
-    if request.method == "POST":
-        if access_code_matches(request.POST.get("code", "")):
-            request.session.cycle_key()
-            request.session[SESSION_ACCESS_KEY] = True
-            request.session.set_expiry(settings.SESSION_COOKIE_AGE)
-            messages.success(request, "Accès autorisé.")
-            if url_has_allowed_host_and_scheme(
-                next_url,
-                allowed_hosts={request.get_host()},
-                require_https=request.is_secure(),
-            ):
-                return redirect(next_url)
-            return redirect("accueil")
-        messages.error(request, "Code d'accès incorrect.")
-
-    if not settings.ACCESS_CODE:
-        messages.error(
-            request,
-            "Le code d'accès n'est pas configuré. Définissez la variable ACCESS_CODE.",
-        )
-    return render(request, "points/access.html", {"next": next_url})
 
 
 def robots_txt(request):
@@ -47,13 +15,11 @@ def robots_txt(request):
     )
 
 
-@shared_code_required
 def home(request):
     houses = House.objects.all()
     return render(request, "points/home.html", {"maisons": houses})
 
 
-@shared_code_required
 @require_http_methods(["GET", "POST"])
 def house_detail(request, slug):
     house = get_object_or_404(House, slug=slug)
@@ -102,13 +68,11 @@ def house_detail(request, slug):
     )
 
 
-@shared_code_required
 @require_http_methods(["GET", "POST"])
 def spend_points(request):
     return _manual_points_form(request, operation="spend")
 
 
-@shared_code_required
 @require_http_methods(["GET", "POST"])
 def add_points(request):
     return _manual_points_form(request, operation="add")

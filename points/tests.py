@@ -8,30 +8,23 @@ from django.contrib.staticfiles.finders import find
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .access import SESSION_ACCESS_KEY
 from .actions import ActionsConfigError, load_actions
 from .models import House, PointLog
 
 
-@override_settings(ACCESS_CODE="test-code")
 class PointsViewsTests(TestCase):
     def setUp(self):
         self.house = House.objects.get(slug="gryffondor")
-        session = self.client.session
-        session[SESSION_ACCESS_KEY] = True
-        session.save()
 
-    def test_public_views_require_shared_code(self):
-        self.client.session.flush()
-        response = self.client.get(reverse("accueil"))
-        self.assertRedirects(response, reverse("access"))
-
-    def test_correct_shared_code_opens_home_and_renders_image_url(self):
-        self.client.session.flush()
-        response = self.client.post(reverse("access"), {"code": "test-code"})
-        self.assertRedirects(response, reverse("accueil"))
+    def test_public_pages_are_available_without_a_shared_code(self):
         response = self.client.get(reverse("accueil"))
         self.assertContains(response, "/static/img/gryffindor.webp")
+        self.assertEqual(
+            self.client.get(reverse("maison", args=[self.house.slug])).status_code,
+            200,
+        )
+        self.assertEqual(self.client.get(reverse("ajouter")).status_code, 200)
+        self.assertEqual(self.client.get(reverse("depenser")).status_code, 200)
         self.assertEqual(
             response["X-Robots-Tag"], "noindex, nofollow, noarchive, nosnippet"
         )

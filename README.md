@@ -1,6 +1,6 @@
 # Points des maisons de Poudlard
 
-Application Django en français pour consulter et gérer les points de Gryffondor, Serpentard, Serdaigle et Poufsouffle. Les pages publiques demandent un code partagé ; l'administration Django utilise ses propres comptes.
+Application Django en français pour consulter et gérer les points de Gryffondor, Serpentard, Serdaigle et Poufsouffle. Les pages publiques sont accessibles sans code. L'administration Django reste protégée par ses propres comptes superutilisateur.
 
 ## Développement local
 
@@ -11,12 +11,11 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 export SECRET_KEY='cle-locale-a-remplacer'
-export ACCESS_CODE='code-local'
 python manage.py migrate
 python manage.py runserver
 ```
 
-Ouvrir http://127.0.0.1:8000/ et saisir la valeur de `ACCESS_CODE`. Pour l'administration, créer un compte avec `python manage.py createsuperuser`, puis se connecter sur `/gestion-hp-admin/`.
+Ouvrir http://127.0.0.1:8000/. Pour l'administration, créer un compte avec `python manage.py createsuperuser`, puis se connecter sur `/gestion-hp-admin/`.
 
 ## Modifier les actions
 
@@ -66,7 +65,6 @@ Les étapes ci-dessous supposent le nom de compte PythonAnywhere `monpseudo` et 
 
    os.environ["SECRET_KEY"] = "REMPLACER-PAR-UNE-CLE-SECRETE-ALEATOIRE"
    os.environ["DEBUG"] = "False"
-   os.environ["ACCESS_CODE"] = "REMPLACER-PAR-UN-CODE-PARTAGE-UNIQUE"
    os.environ["ALLOWED_HOSTS"] = "monpseudo.pythonanywhere.com"
    os.environ["ADMIN_URL"] = "gestion-hp-admin/"
    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "poudlard.settings")
@@ -114,13 +112,13 @@ curl -i https://monpseudo.pythonanywhere.com/robots.txt
 curl -sSI https://monpseudo.pythonanywhere.com/ | grep -i '^X-Robots-Tag:'
 ```
 
-La première commande doit renvoyer `User-agent: *` puis `Disallow: /`. La seconde doit afficher `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet`. La page d'accueil peut rediriger vers la saisie du code si la session n'est pas encore ouverte.
+La première commande doit renvoyer `User-agent: *` puis `Disallow: /`. La seconde doit afficher `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet`.
 
 ## Checklist finale
 
 - [ ] Déploiement PythonAnywhere terminé et application rechargée.
-- [ ] `SECRET_KEY`, `DEBUG=False`, `ACCESS_CODE` et `ALLOWED_HOSTS` configurés dans le fichier WSGI.
+- [ ] `SECRET_KEY`, `DEBUG=False` et `ALLOWED_HOSTS` configurés dans le fichier WSGI.
 - [ ] Superutilisateur créé et administration accessible sur `/gestion-hp-admin/`.
-- [ ] Code partagé demandé sur les pages publiques ; points ajoutés et retraits inscrits dans l'historique.
+- [ ] Pages publiques accessibles sans code ; points ajoutés et retraits inscrits dans l'historique.
 - [ ] `robots.txt`, l'en-tête `X-Robots-Tag` et la balise robots HTML vérifiés.
 - [ ] Les quatre images fournies déposées sous les noms attendus dans `static/img/`.
