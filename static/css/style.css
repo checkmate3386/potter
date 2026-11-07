@@ -226,6 +226,89 @@ h2 {
   padding: 1.2rem;
 }
 
+.pin-panel {
+  max-width: 430px;
+  margin: 2rem auto;
+  padding: clamp(1.25rem, 6vw, 2rem);
+  text-align: center;
+}
+
+.pin-emblem {
+  margin-bottom: .4rem;
+  color: var(--gold);
+  font-size: 2rem;
+}
+
+.pin-intro, .pin-help {
+  color: var(--muted);
+}
+
+.pin-form {
+  display: grid;
+  gap: .75rem;
+  justify-items: center;
+}
+
+.pin-input {
+  width: min(100%, 220px);
+  min-height: 58px;
+  border: 2px solid rgba(104, 71, 40, .65);
+  border-radius: 10px;
+  background: #fffdf7;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.8rem;
+  letter-spacing: .55rem;
+  text-align: center;
+}
+
+.pin-help {
+  margin: -.35rem 0 0;
+  font-size: .9rem;
+}
+
+.keypad {
+  display: grid;
+  width: min(100%, 260px);
+  grid-template-columns: repeat(3, 1fr);
+  gap: .55rem;
+}
+
+.keypad-key {
+  min-height: 58px;
+  border: 1px solid rgba(104, 71, 40, .5);
+  border-radius: 10px;
+  background: rgba(255, 248, 233, .85);
+  color: var(--brown);
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.keypad-key:hover, .keypad-key:focus-visible {
+  background: var(--paper);
+}
+
+.keypad-utility {
+  color: var(--muted);
+}
+
+.pin-submit {
+  width: min(100%, 260px);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 .narrow {
   max-width: 520px;
   margin: 1rem auto;

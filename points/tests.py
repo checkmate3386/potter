@@ -15,8 +15,41 @@ from .models import House, PointLog
 class PointsViewsTests(TestCase):
     def setUp(self):
         self.house = House.objects.get(slug="gryffondor")
+        session = self.client.session
+        session["site_access_granted"] = True
+        session.save()
 
-    def test_public_pages_are_available_without_a_shared_code(self):
+    def test_home_requires_correct_pin_before_allowing_site_access(self):
+        session = self.client.session
+        session.flush()
+
+        response = self.client.get(reverse("accueil"))
+        self.assertContains(response, "Bienvenue à Poudlard")
+        self.assertContains(response, 'data-digit="3"')
+
+        for url in (
+            reverse("maison", args=[self.house.slug]),
+            reverse("ajouter"),
+            reverse("depenser"),
+        ):
+            with self.subTest(url=url):
+                self.assertRedirects(self.client.get(url), reverse("accueil"))
+
+        response = self.client.post(
+            reverse("ajouter"),
+            {"maison": self.house.pk, "points": "10"},
+        )
+        self.assertRedirects(response, reverse("accueil"))
+        self.house.refresh_from_db()
+        self.assertEqual(self.house.points, 0)
+
+        response = self.client.post(reverse("accueil"), {"pin": "0000"})
+        self.assertContains(response, "Code incorrect. Réessaie.")
+        self.assertNotIn("site_access_granted", self.client.session)
+
+        response = self.client.post(reverse("accueil"), {"pin": "3014"})
+        self.assertRedirects(response, reverse("accueil"))
+        self.assertTrue(self.client.session["site_access_granted"])
         response = self.client.get(reverse("accueil"))
         self.assertContains(response, "/static/img/gryffindor.webp")
         self.assertEqual(

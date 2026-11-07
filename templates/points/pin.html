@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenue — Points des maisons{% endblock %}
+
+{% block content %}
+  <section class="pin-panel parchment" aria-labelledby="pin-title">
+    <div class="pin-emblem" aria-hidden="true">✦</div>
+    <h1 id="pin-title">Bienvenue à Poudlard</h1>
+    <p class="pin-intro">Saisis le code pour accéder au classement des maisons.</p>
+    <form class="pin-form" method="post">
+      {% csrf_token %}
+      <label class="visually-hidden" for="pin-code">Code d’accès</label>
+      <input
+        class="pin-input"
+        id="pin-code"
+        name="pin"
+        type="password"
+        inputmode="numeric"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        autocomplete="off"
+        placeholder="••••"
+        aria-describedby="pin-help"
+        required
+      >
+      <p class="pin-help" id="pin-help">Code à 4 chiffres</p>
+      <div class="keypad" role="group" aria-label="Pavé numérique">
+        {% for digit in "123456789" %}
+          <button class="keypad-key" type="button" data-digit="{{ digit }}" aria-label="{{ digit }}">{{ digit }}</button>
+        {% endfor %}
+        <button class="keypad-key keypad-utility" type="button" data-clear aria-label="Effacer le code">⌫</button>
+        <button class="keypad-key" type="button" data-digit="0" aria-label="0">0</button>
+        <span aria-hidden="true"></span>
+      </div>
+      <button class="button primary pin-submit" type="submit">Entrer</button>
+    </form>
+  </section>
+  <script>
+    const pinInput = document.querySelector("#pin-code");
+    document.querySelectorAll("[data-digit]").forEach((key) => {
+      key.addEventListener("click", () => {
+        if (pinInput.value.length < 4) pinInput.value += key.dataset.digit;
+        pinInput.focus();
+      });
+    });
+    document.querySelector("[data-clear]").addEventListener("click", () => {
+      pinInput.value = "";
+      pinInput.focus();
+    });
+  </script>
+{% endblock %}

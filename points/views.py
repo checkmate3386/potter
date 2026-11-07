@@ -1,3 +1,5 @@
+from functools import wraps
+
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -8,6 +10,16 @@ from .models import House
 from .services import InsufficientPointsError, apply_points
 
 
+def pin_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
+        if not request.session.get("site_access_granted"):
+            return redirect("accueil")
+        return view_func(request, *args, **kwargs)
+
+    return wrapped_view
+
+
 def robots_txt(request):
     return HttpResponse(
         "User-agent: *\nDisallow: /\n",
@@ -15,12 +27,23 @@ def robots_txt(request):
     )
 
 
+@require_http_methods(["GET", "POST"])
 def home(request):
+    if request.method == "POST":
+        if request.POST.get("pin") == "3014":
+            request.session["site_access_granted"] = True
+            return redirect("accueil")
+        messages.error(request, "Code incorrect. Réessaie.")
+
+    if not request.session.get("site_access_granted"):
+        return render(request, "points/pin.html")
+
     houses = House.objects.all()
     return render(request, "points/home.html", {"maisons": houses})
 
 
 @require_http_methods(["GET", "POST"])
+@pin_required
 def house_detail(request, slug):
     house = get_object_or_404(House, slug=slug)
     if request.method == "POST":
@@ -69,11 +92,13 @@ def house_detail(request, slug):
 
 
 @require_http_methods(["GET", "POST"])
+@pin_required
 def spend_points(request):
     return _manual_points_form(request, operation="spend")
 
 
 @require_http_methods(["GET", "POST"])
+@pin_required
 def add_points(request):
     return _manual_points_form(request, operation="add")
 
