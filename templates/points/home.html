@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Classement des maisons{% endblock %}
+
+{% block content %}
+  <section class="intro">
+    <h1>Le classement des maisons</h1>
+    <p>Choisis une maison pour voir les actions et faire évoluer son score.</p>
+  </section>
+  <section class="house-list" aria-label="Maisons">
+    {% for maison in maisons %}
+      <a class="house-card parchment" href="{% url 'maison' maison.slug %}">
+        <img src="{% static 'img/' %}{{ maison.image }}" alt="Blason de {{ maison.nom }}" width="120" height="120">
+        <span class="house-info">
+          <strong>{{ maison.nom }}</strong>
+          <span class="score">{{ maison.points }} point{{ maison.points|pluralize:"s" }}</span>
+        </span>
+        <span class="chevron" aria-hidden="true">›</span>
+      </a>
+    {% empty %}
+      <p class="panel">Aucune maison n'a été créée. Lancez les migrations.</p>
+    {% endfor %}
+  </section>
+  <nav class="main-actions" aria-label="Gestion des points">
+    <a class="button primary" href="{% url 'ajouter' %}">Rajouter des points</a>
+    <a class="button secondary" href="{% url 'depenser' %}">Dépenser des points</a>
+  </nav>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}{% if operation == "add" %}Rajouter{% else %}Dépenser{% endif %} des points{% endblock %}
+
+{% block content %}
+  <section class="panel narrow">
+    <h1>{% if operation == "add" %}Rajouter des points{% else %}Dépenser des points{% endif %}</h1>
+    <form method="post" class="stack">
+      {% csrf_token %}
+      <label for="maison">Maison</label>
+      <select id="maison" name="maison" required>
+        <option value="">Choisir une maison</option>
+        {% for maison in maisons %}
+          <option value="{{ maison.pk }}" {% if selected_house.pk == maison.pk %}selected{% endif %}>
+            {{ maison.nom }} — {{ maison.points }} point{{ maison.points|pluralize:"s" }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <label for="points">Nombre de points</label>
+      <input id="points" name="points" type="number" min="1" step="1" value="{{ amount }}" inputmode="numeric" required>
+
+      <button class="button {% if operation == 'add' %}primary{% else %}secondary{% endif %}" type="submit">
+        {% if operation == "add" %}Rajouter les points{% else %}Dépenser les points{% endif %}
+      </button>
+    </form>
+    <a class="button back" href="{% url 'accueil' %}">Retour à l'accueil</a>
+  </section>
+{% endblock %}

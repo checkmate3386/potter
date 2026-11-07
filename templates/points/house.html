@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ maison.nom }} — Points des maisons{% endblock %}
+
+{% block content %}
+  <section class="house-heading parchment">
+    <img src="{% static 'img/' %}{{ maison.image }}" alt="Blason de {{ maison.nom }}" width="144" height="144">
+    <div>
+      <h1>{{ maison.nom }}</h1>
+      <p class="score">{{ maison.points }} point{{ maison.points|pluralize:"s" }}</p>
+    </div>
+  </section>
+
+  <section class="actions-section">
+    <h2>Choisir une action</h2>
+    {% if actions_error %}
+      <p class="message error" role="alert">{{ actions_error }}</p>
+    {% elif actions %}
+      <div class="action-list">
+        {% for action in actions %}
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action_index" value="{{ forloop.counter0 }}">
+            <button class="action-button" type="submit">
+              <span>{{ action.nom }}</span>
+              <strong class="{% if action.points < 0 %}negative{% else %}positive{% endif %}">
+                {{ action.points|stringformat:"+d" }}
+              </strong>
+            </button>
+          </form>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="panel">Aucune action n'est définie dans config/actions.json.</p>
+    {% endif %}
+  </section>
+  <a class="button back" href="{% url 'accueil' %}">Retour à l'accueil</a>
+{% endblock %}

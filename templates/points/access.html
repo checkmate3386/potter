@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Accès privé — Points des maisons{% endblock %}
+
+{% block content %}
+  <section class="panel narrow">
+    <h1>Accès privé</h1>
+    <p>Entre le code partagé pour consulter et modifier les points.</p>
+    <form method="post" class="stack">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <label for="code">Code d'accès</label>
+      <input id="code" name="code" type="password" autocomplete="current-password" required>
+      <button class="button primary" type="submit">Entrer</button>
+    </form>
+  </section>
+{% endblock %}

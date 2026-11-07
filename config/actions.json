@@ -1,0 +1,13 @@
+{
+  "actions": [
+    {"nom": "Bonne réponse en classe", "points": 5},
+    {"nom": "Aider un camarade", "points": 10},
+    {"nom": "Participer à une activité", "points": 5},
+    {"nom": "Faire preuve de courage", "points": 10},
+    {"nom": "Ranger la salle commune", "points": 3},
+    {"nom": "Geste particulièrement généreux", "points": 15},
+    {"nom": "Oubli de devoirs", "points": -5},
+    {"nom": "Bavardage pendant le cours", "points": -3},
+    {"nom": "Ne pas respecter une règle", "points": -10}
+  ]
+}
