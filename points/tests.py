@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles.finders import find
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -30,10 +31,23 @@ class PointsViewsTests(TestCase):
         response = self.client.post(reverse("access"), {"code": "test-code"})
         self.assertRedirects(response, reverse("accueil"))
         response = self.client.get(reverse("accueil"))
-        self.assertContains(response, "/static/img/gryffondor.png")
+        self.assertContains(response, "/static/img/gryffindor.webp")
         self.assertEqual(
             response["X-Robots-Tag"], "noindex, nofollow, noarchive, nosnippet"
         )
+
+    def test_house_logos_use_existing_jpeg_and_webp_files(self):
+        expected_images = {
+            "gryffondor": "gryffindor.webp",
+            "serpentard": "slytherin.jpeg",
+            "serdaigle": "ravenclaw.webp",
+            "poufsouffle": "hufflepuff.webp",
+        }
+        for slug, filename in expected_images.items():
+            with self.subTest(house=slug):
+                house = House.objects.get(slug=slug)
+                self.assertEqual(house.image, filename)
+                self.assertIsNotNone(find(f"img/{filename}"))
 
     def test_action_adds_points_and_creates_history(self):
         with patch(

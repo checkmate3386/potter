@@ -24,14 +24,14 @@ Le fichier [`config/actions.json`](./config/actions.json) est relu à chaque aff
 
 ## Images et fond
 
-Déposez vos fichiers fournis dans `static/img/` avec ces noms exacts :
+Les logos actuels sont dans `static/img/`. L'application utilise les fichiers suivants :
 
-- `gryffondor.png`
-- `serpentard.png`
-- `serdaigle.png`
-- `poufsouffle.png`
+- Gryffondor : `gryffindor.webp`
+- Serpentard : `slytherin.jpeg`
+- Serdaigle : `ravenclaw.webp`
+- Poufsouffle : `hufflepuff.webp`
 
-Le dossier est conservé dans Git par `.gitkeep`. Le fond parchemin est fait en CSS (dégradés beige, bordure et ombre) ; aucune image de fond n'est requise. Si vous fournissez un `parchemin.jpg`, le CSS pourra être adapté pour l'utiliser.
+Les images peuvent être au format JPEG, PNG ou WebP : le nom de fichier stocké pour chaque maison doit correspondre au nom exact du fichier dans `static/img/`. Il est également possible de modifier ce nom dans l'administration Django, dans la fiche de la maison. Le dossier est conservé dans Git par `.gitkeep`. Le fond parchemin est fait en CSS (dégradés beige, bordure et ombre) ; aucune image de fond n'est requise. Si vous fournissez un `parchemin.jpg`, le CSS pourra être adapté pour l'utiliser.
 
 ## Déploiement gratuit sur PythonAnywhere
 
